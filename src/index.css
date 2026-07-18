@@ -5078,3 +5078,230 @@ input:checked + .prop-slider:before {
 .select-template-action-btn:active {
   transform: translateY(0);
 }
+
+/* ==========================================
+   9. MOBILE RESPONSIVENESS OVERRIDES & STYLES
+   ========================================== */
+
+/* Hamburger menu toggle button styling */
+.toolbar-menu-btn {
+  background: transparent;
+  border: 1px solid var(--border-ui);
+  color: var(--text-ui);
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.toolbar-menu-btn:hover {
+  background: var(--bg-hover-ui);
+}
+
+/* Premium dark backdrop blur overlay for drawers */
+.app-container::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 99;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  backdrop-filter: blur(2px);
+}
+
+/* Responsive Media Query for Tablets and Mobile Screens */
+@media (max-width: 1024px) {
+  /* Activate the dark backdrop blur when either drawer is open */
+  .app-container:not(.sidebar-is-collapsed)::after,
+  .app-container.properties-panel-is-open::after {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Transform Sidebar into overlay drawer sliding from left */
+  .app-sidebar {
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    height: 100vh !important;
+    width: 280px !important;
+    max-width: 80vw !important;
+    z-index: 200 !important;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border-right: 1px solid var(--border-ui) !important;
+    box-shadow: none;
+  }
+  
+  /* When sidebar is expanded/open (not collapsed in state) */
+  .app-container:not(.sidebar-is-collapsed) .app-sidebar {
+    transform: translateX(0) !important;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.25) !important;
+  }
+
+  /* When sidebar is collapsed/hidden */
+  .sidebar-is-collapsed .app-sidebar {
+    transform: translateX(-100%) !important;
+    width: 0 !important;
+    padding: 0 !important;
+    border-right: none !important;
+  }
+
+  /* Transform Properties Panel into overlay drawer sliding from right */
+  .app-properties-panel {
+    position: fixed !important;
+    right: 0 !important;
+    top: 0 !important;
+    height: 100vh !important;
+    width: 280px !important;
+    max-width: 80vw !important;
+    z-index: 200 !important;
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border-left: 1px solid var(--border-ui) !important;
+    box-shadow: none !important;
+  }
+
+  /* When properties panel is explicitly open */
+  .app-container.properties-panel-is-open .app-properties-panel {
+    transform: translateX(0) !important;
+    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.25) !important;
+  }
+
+  /* Close button styling inside properties panel on mobile */
+  .properties-close-btn {
+    display: flex !important;
+  }
+}
+
+/* Hide responsive triggers on full desktop screens */
+@media (min-width: 1025px) {
+  .toolbar-menu-btn {
+    display: none !important;
+  }
+  .toolbar-properties-toggle-btn {
+    display: none !important;
+  }
+}
+
+/* Responsive Media Query for Mobile Devices specifically */
+@media (max-width: 768px) {
+  /* Enable horizontal scroll format for toolbar buttons instead of overflowing */
+  .app-toolbar {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    padding: 8px 12px !important;
+    width: 100vw !important;
+    height: auto !important;
+    box-sizing: border-box !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  .app-toolbar::-webkit-scrollbar {
+    display: none !important; /* Hide ugly scrollbars but keep swipeable format */
+  }
+
+  .toolbar-left, 
+  .toolbar-center-segmented, 
+  .toolbar-right {
+    flex-shrink: 0 !important;
+  }
+
+  .toolbar-breadcrumbs {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Dashboard View mobile optimizations */
+  .dashboard-container {
+    padding: 16px 12px !important;
+    gap: 20px !important;
+  }
+
+  .dashboard-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 16px !important;
+  }
+
+  .dashboard-controls {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+
+  .dashboard-search-bar {
+    width: 100% !important;
+  }
+
+  .dashboard-create-btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  .templates-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  .notebooks-grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)) !important;
+    gap: 10px !important;
+  }
+
+  .dashboard-notebook-card {
+    padding: 8px !important;
+  }
+
+  /* Workspace Footer bar optimizations */
+  .workspace-footer-bar {
+    flex-wrap: wrap !important;
+    height: auto !important;
+    padding: 8px !important;
+    gap: 6px !important;
+    justify-content: center !important;
+  }
+
+  .footer-divider-vert {
+    display: none !important; /* Hide separators on small wrap */
+  }
+
+  /* Canvas Workspace backdrop spacing */
+  .paper-canvas-scroll-container {
+    padding: 12px 6px !important;
+  }
+  
+  .canvas-workspace-layout-inner {
+    padding: 0 !important;
+  }
+}
+
+/* Modals sizing responsive overrides */
+@media (max-width: 600px) {
+  .confirm-modal-box,
+  .alert-modal-box,
+  .settings-modal-box,
+  .shortcuts-modal-box,
+  .stickers-modal-box,
+  .templates-modal-box {
+    width: 92% !important;
+    max-height: 85vh !important;
+    padding: 16px !important;
+    margin: auto !important;
+    overflow-y: auto !important;
+  }
+
+  .settings-grid, 
+  .shortcuts-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+}

@@ -101,9 +101,12 @@ export const App: React.FC = () => {
 
   // Collapsible sidebar & Dashboard states
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [propertiesOpen, setPropertiesOpen] = useState(false);
   const [nbSearchQuery, setNbSearchQuery] = useState('');
   const [sidebarSearchQuery, setSidebarSearchQuery] = useState('');
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+
 
   useEffect(() => {
     const container = scrollContainerRef.current;
@@ -128,6 +131,30 @@ export const App: React.FC = () => {
   const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
   const [zoom, setZoom] = useState<number>(() => getZoom());
   const [theme, setTheme] = useState<ThemeMode>(() => getTheme());
+
+  // Auto-fit page zoom on mobile/tablet viewports
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        const fitZoom = Math.max(0.45, Math.min(1.0, (window.innerWidth - 32) / 750));
+        setZoom(fitZoom);
+      } else if (window.innerWidth < 1024) {
+        const fitZoom = Math.max(0.55, Math.min(1.0, (window.innerWidth - 80) / 750));
+        setZoom(fitZoom);
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [activePageId]);
+
+  // Auto-open properties panel on mobile when an element is selected
+  useEffect(() => {
+    if (selectedElementId) {
+      setPropertiesOpen(true);
+    }
+  }, [selectedElementId]);
 
   // Pen properties
   const [penColor, setPenColor] = useState<string>('#0F172A');
@@ -1199,7 +1226,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className={`app-container theme-${theme} ${sidebarCollapsed ? 'sidebar-is-collapsed' : ''} ${activeNotebookId === null ? 'in-dashboard' : ''}`}>
+    <div className={`app-container theme-${theme} ${sidebarCollapsed ? 'sidebar-is-collapsed' : ''} ${propertiesOpen ? 'properties-panel-is-open' : ''} ${activeNotebookId === null ? 'in-dashboard' : ''}`}>
       {/* Sidebar navigation */}
       <Sidebar
         folders={folders}
@@ -1375,6 +1402,10 @@ export const App: React.FC = () => {
               setActiveNotebookId(null);
               setActivePageId(null);
             }}
+            sidebarCollapsed={sidebarCollapsed}
+            onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
+            propertiesOpen={propertiesOpen}
+            onToggleProperties={() => setPropertiesOpen(!propertiesOpen)}
           />
 
           {/* Paper workspace wrapper - desk mat backdrop styled */}

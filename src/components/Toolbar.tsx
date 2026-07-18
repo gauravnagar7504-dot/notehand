@@ -19,7 +19,9 @@ import {
   Share,
   ChevronDown,
   Plus,
-  Edit3
+  Edit3,
+  Menu,
+  SlidersHorizontal
 } from 'lucide-react';
 import type { ShapeType, PenType } from '../types';
 
@@ -62,6 +64,12 @@ interface ToolbarProps {
   folderName?: string | null;
   pageTitle?: string;
   onGoHome?: () => void;
+
+  // Responsive Sidebar/Properties controls
+  sidebarCollapsed?: boolean;
+  onToggleSidebar?: () => void;
+  propertiesOpen?: boolean;
+  onToggleProperties?: () => void;
 }
 
 export const Toolbar: React.FC<ToolbarProps> = ({
@@ -87,7 +95,11 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   notebookName = 'Study Notebook',
   folderName,
   pageTitle,
-  onGoHome
+  onGoHome,
+  sidebarCollapsed = false,
+  onToggleSidebar,
+  propertiesOpen = false,
+  onToggleProperties
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const backupInputRef = useRef<HTMLInputElement>(null);
@@ -122,6 +134,15 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     <div className="app-toolbar">
       {/* Left side: Back Home navigation and Notebook Name */}
       <div className="toolbar-left" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        {onToggleSidebar && (
+          <button 
+            onClick={onToggleSidebar} 
+            className="toolbar-menu-btn" 
+            title={sidebarCollapsed ? "Open Sidebar" : "Close Sidebar"}
+          >
+            <Menu size={18} />
+          </button>
+        )}
         <div className="toolbar-breadcrumbs">
           {onGoHome && (
             <button onClick={onGoHome} className="breadcrumb-item" title="Go to Study Desk">
@@ -319,6 +340,17 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         >
           <Redo2 size={14} />
         </button>
+
+        {onToggleProperties && (
+          <button
+            onClick={onToggleProperties}
+            className={`segment-btn toolbar-properties-toggle-btn ${propertiesOpen ? 'active' : ''}`}
+            title="Paper & Element Settings"
+            style={{ padding: '6px', minHeight: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          >
+            <SlidersHorizontal size={14} />
+          </button>
+        )}
 
         <div className="divider-vert" />
 
