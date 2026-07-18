@@ -100,7 +100,8 @@ export const App: React.FC = () => {
 
 
   // Collapsible sidebar & Dashboard states
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  // On mobile (<1024px), sidebar starts hidden; on desktop it starts visible
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => window.innerWidth < 1024);
   const [propertiesOpen, setPropertiesOpen] = useState(false);
   const [nbSearchQuery, setNbSearchQuery] = useState('');
   const [sidebarSearchQuery, setSidebarSearchQuery] = useState('');
@@ -1225,8 +1226,18 @@ export const App: React.FC = () => {
     }
   };
 
+  // Close drawers on mobile when tapping the backdrop
+  const handleBackdropClick = () => {
+    if (!sidebarCollapsed) setSidebarCollapsed(true);
+    if (propertiesOpen) setPropertiesOpen(false);
+  };
+
   return (
     <div className={`app-container theme-${theme} ${sidebarCollapsed ? 'sidebar-is-collapsed' : ''} ${propertiesOpen ? 'properties-panel-is-open' : ''} ${activeNotebookId === null ? 'in-dashboard' : ''}`}>
+      {/* Backdrop overlay for mobile drawers */}
+      {((!sidebarCollapsed || propertiesOpen) && window.innerWidth < 1024) && (
+        <div className="mobile-backdrop-overlay" onClick={handleBackdropClick} />
+      )}
       {/* Sidebar navigation */}
       <Sidebar
         folders={folders}
@@ -1235,9 +1246,15 @@ export const App: React.FC = () => {
         activeFolderId={activeFolderId}
         setActiveFolderId={setActiveFolderId}
         activeNotebookId={activeNotebookId}
-        setActiveNotebookId={setActiveNotebookId}
+        setActiveNotebookId={(id) => {
+          setActiveNotebookId(id);
+          if (id !== null && window.innerWidth < 1024) setSidebarCollapsed(true);
+        }}
         activePageId={activePageId}
-        setActivePageId={setActivePageId}
+        setActivePageId={(id) => {
+          setActivePageId(id);
+          if (id !== null && window.innerWidth < 1024) setSidebarCollapsed(true);
+        }}
         theme={theme}
         setTheme={setTheme}
         onCreateFolder={handleCreateFolder}
