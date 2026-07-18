@@ -108,8 +108,13 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   React.useEffect(() => {
     if (openDropdown === 'none') return;
     const handleClose = () => setOpenDropdown('none');
-    document.addEventListener('click', handleClose);
-    return () => document.removeEventListener('click', handleClose);
+    const timer = setTimeout(() => {
+      document.addEventListener('click', handleClose);
+    }, 0);
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener('click', handleClose);
+    };
   }, [openDropdown]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -102,16 +102,16 @@ export const HandwrittenText: React.FC<HandwrittenTextProps> = ({
     }
 
     if (activeType === 'wavy') {
-      const waveFreq = 10; // pixels per cycle
-      const waveAmp = Math.max(1.5, fontSize * 0.06);
+      const waveFreq = 12; // wavelength in pixels
+      const waveAmp = Math.max(1.8, fontSize * 0.055);
       let d = `M ${startX} ${yPos}`;
-      const cycles = Math.floor(lineWidth / waveFreq);
-      for (let i = 0; i <= cycles; i++) {
-        const cx = startX + i * waveFreq;
-        const cy = yPos + (i % 2 === 0 ? waveAmp : -waveAmp) * (0.8 + getLineNoise(lineIdx + i, 14) * 0.4 * jitter);
+      // Calculate high-resolution step points for a smooth organic sine wave
+      for (let x = 2; x <= lineWidth; x += 3) {
+        const cx = startX + x;
+        const cy = yPos + Math.sin((x / waveFreq) * Math.PI * 2) * waveAmp * (0.95 + getLineNoise(lineIdx + x, 14) * 0.15 * jitter);
         d += ` L ${cx} ${cy}`;
       }
-      return <path d={d} stroke={uColor} strokeWidth={Math.max(1.2, fontSize * 0.05)} fill="none" strokeLinecap="round" opacity="0.85" />;
+      return <path d={d} stroke={uColor} strokeWidth={Math.max(1.2, fontSize * 0.055)} fill="none" strokeLinecap="round" opacity="0.85" />;
     }
 
     if (activeType === 'dotted') {
@@ -191,7 +191,7 @@ export const HandwrittenText: React.FC<HandwrittenTextProps> = ({
         );
 
         // Render underline path
-        const underlineElement = renderUnderlinePath(yPos + fontSize * 0.15, lineWidth, startX, lineIdx);
+        const underlineElement = renderUnderlinePath(yPos + fontSize * 0.22, lineWidth, startX, lineIdx);
 
         // Render line-level organic variations (subtle tilt and vertical shift based on jitter)
         const lineRot = (getLineNoise(lineIdx, 17) - 0.5) * 0.4 * jitter;
