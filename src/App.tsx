@@ -1553,6 +1553,7 @@ export const App: React.FC = () => {
           updatePaperStyle={updatePaperStyle}
           onDeleteElement={handleDeleteElement}
           onDeselect={() => setSelectedElementId(null)}
+          onClose={() => setPropertiesOpen(false)}
           updatePageTags={updatePageTags}
           captureHistoryState={captureHistoryState}
         />

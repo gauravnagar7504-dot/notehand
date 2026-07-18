@@ -5115,12 +5115,19 @@ input:checked + .prop-slider:before {
 /* ====== TABLET & MOBILE: <1024px ====== */
 @media (max-width: 1024px) {
 
+  /* Prevent all horizontal overflow on the whole app */
+  .app-container {
+    overflow-x: hidden !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+  }
+
   /* Dark backdrop overlay div for mobile drawers */
   .mobile-backdrop-overlay {
     position: fixed;
     inset: 0;
     background-color: rgba(0, 0, 0, 0.45);
-    z-index: 199;
+    z-index: 2999;
     backdrop-filter: blur(2px);
     -webkit-backdrop-filter: blur(2px);
     cursor: pointer;
@@ -5136,7 +5143,7 @@ input:checked + .prop-slider:before {
     height: 100dvh !important;
     width: 280px !important;
     max-width: 82vw !important;
-    z-index: 200 !important;
+    z-index: 3000 !important;
     transform: translateX(-100%);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     box-shadow: none !important;
@@ -5144,9 +5151,11 @@ input:checked + .prop-slider:before {
     padding: 16px !important;
     flex-direction: column !important;
     display: flex !important;
+    background-color: var(--bg-sidebar) !important;
+    border-right: 1px solid var(--border-ui) !important;
   }
 
-  /* Sidebar OPEN (when sidebarCollapsed is false => no .sidebar-is-collapsed class) */
+  /* Sidebar OPEN */
   .app-container:not(.sidebar-is-collapsed) .app-sidebar,
   .app-container:not(.sidebar-is-collapsed) .app-sidebar.collapsed {
     transform: translateX(0) !important;
@@ -5158,61 +5167,77 @@ input:checked + .prop-slider:before {
   .app-container.sidebar-is-collapsed .app-sidebar.collapsed {
     transform: translateX(-100%) !important;
     width: 280px !important;
+    visibility: hidden !important;
   }
 
-  /* --- Properties panel as overlay drawer from right --- */
+  /* --- Properties panel as Canva-style bottom drawer --- */
   .app-properties-panel {
     position: fixed !important;
+    left: 0 !important;
     right: 0 !important;
-    top: 0 !important;
-    height: 100vh !important;
-    height: 100dvh !important;
-    width: 280px !important;
-    max-width: 82vw !important;
-    z-index: 200 !important;
-    transform: translateX(100%);
+    bottom: 0 !important;
+    top: auto !important;
+    height: 55vh !important;
+    height: 55dvh !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    z-index: 3000 !important;
+    transform: translateY(100%);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    box-shadow: none !important;
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.25) !important;
+    border-top: 1px solid var(--border-ui) !important;
+    border-left: none !important;
+    border-radius: 20px 20px 0 0 !important;
+    padding: 16px 16px 32px 16px !important;
     overflow-y: auto !important;
+  }
+
+  /* Bottom sheet handle visual helper */
+  .app-properties-panel::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 4px;
+    background-color: var(--border-ui);
+    opacity: 0.8;
+    border-radius: 2px;
+    margin: -8px auto 16px auto;
+    flex-shrink: 0;
   }
 
   /* Properties panel OPEN */
   .app-container.properties-panel-is-open .app-properties-panel {
-    transform: translateX(0) !important;
-    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.3) !important;
+    transform: translateY(0) !important;
   }
 
-  /* Main workspace should take full width */
+  /* --- Main workspace takes full width on mobile --- */
   .app-main-workspace {
-    width: 100% !important;
+    width: 100vw !important;
+    min-width: 100vw !important;
+    max-width: 100vw !important;
     margin-left: 0 !important;
+    flex: none !important;
   }
 
   /* Dashboard also takes full width */
   .dashboard-container {
     width: 100% !important;
-  }
-}
-
-/* ====== MOBILE: <768px ====== */
-@media (max-width: 768px) {
-
-  /* App container - prevent horizontal overflow */
-  .app-container {
-    overflow-x: hidden !important;
+    box-sizing: border-box !important;
   }
 
-  /* Horizontally scrollable toolbar */
+  /* --- Toolbar: horizontally scrollable on mobile/tablet --- */
   .app-toolbar {
+    display: flex !important;
     flex-wrap: nowrap !important;
     overflow-x: auto !important;
     overflow-y: hidden !important;
     justify-content: flex-start !important;
-    gap: 6px !important;
-    padding: 6px 10px !important;
+    gap: 4px !important;
+    padding: 6px 8px !important;
     width: 100% !important;
+    max-width: 100vw !important;
     height: auto !important;
-    min-height: 44px !important;
+    min-height: 42px !important;
     box-sizing: border-box !important;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
@@ -5221,37 +5246,81 @@ input:checked + .prop-slider:before {
     display: none !important;
   }
 
-  /* Prevent toolbar sections from shrinking */
+  /* Toolbar sections: don't shrink, flow inline */
   .toolbar-left,
   .toolbar-center-segmented,
   .toolbar-right {
     flex-shrink: 0 !important;
   }
 
-  /* Truncate breadcrumbs on mobile */
+  /* Truncate breadcrumbs */
   .toolbar-breadcrumbs {
-    max-width: 120px !important;
+    max-width: 80px !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
     white-space: nowrap !important;
   }
 
-  /* Hide breadcrumb folder and page items on very small screens */
-  .breadcrumb-separator,
+  /* Hide breadcrumb separators and non-first items */
+  .breadcrumb-separator {
+    display: none !important;
+  }
   .breadcrumb-item:not(:first-child) {
     display: none !important;
   }
 
-  /* Segment button labels - hide text, keep icons */
-  .toolbar-center-segmented .segment-btn span,
+  /* Hide button text labels — icon only on mobile */
+  .toolbar-center-segmented .segment-btn span:not(.segment-chevron),
   .toolbar-right .export-action-btn-new span {
     display: none !important;
   }
 
+  /* Compact segment buttons */
   .segment-btn {
-    padding: 6px !important;
-    min-width: 32px !important;
-    min-height: 32px !important;
+    padding: 5px 8px !important;
+    font-size: 12px !important;
+  }
+
+  /* Hide dividers to save space */
+  .toolbar-center-segmented .divider-vert {
+    display: none !important;
+  }
+
+  /* Fixed viewport-relative positioning for dropdowns to prevent clipping by scrollable parents */
+  .segment-dropdown-menu {
+    position: fixed !important;
+    top: 54px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 90vw !important;
+    max-width: 280px !important;
+    z-index: 2200 !important;
+  }
+
+  .export-dropdown-menu {
+    position: fixed !important;
+    top: 54px !important;
+    right: 12px !important;
+    left: auto !important;
+    width: calc(100vw - 24px) !important;
+    max-width: 250px !important;
+    z-index: 2200 !important;
+  }
+}
+
+/* ====== MOBILE: <768px ====== */
+@media (max-width: 768px) {
+
+  /* Even more compact segment buttons on phone */
+  .segment-btn {
+    padding: 5px 6px !important;
+    min-width: 30px !important;
+    min-height: 30px !important;
+  }
+
+  /* Toolbar breadcrumbs - show only Home */
+  .toolbar-breadcrumbs {
+    max-width: 50px !important;
   }
 
   /* Dashboard mobile optimizations */
@@ -5347,7 +5416,7 @@ input:checked + .prop-slider:before {
     padding: 0 !important;
   }
 
-  /* Hide floating page arrows on mobile - use footer pagination instead */
+  /* Hide floating page arrows on mobile */
   .floating-page-arrow {
     display: none !important;
   }

@@ -23,6 +23,7 @@ interface PropertiesPanelProps {
   updatePaperStyle: (style: PaperStyle) => void;
   onDeleteElement: (id: string) => void;
   onDeselect?: () => void;
+  onClose?: () => void;
   updatePageTags: (tags: string[]) => void;
   captureHistoryState: () => void;
 }
@@ -58,6 +59,7 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
   updatePaperStyle,
   onDeleteElement,
   onDeselect,
+  onClose,
   updatePageTags,
   captureHistoryState
 }) => {
@@ -118,7 +120,14 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
     const style = page.paperStyle;
     return (
       <div className="panel-section">
-        <h3 className="section-title"><Settings size={14} style={{ marginRight: '6px' }} /> Paper Settings</h3>
+        <div className="selection-item-header" style={{ borderBottom: 'none', marginBottom: '8px', paddingBottom: '0' }}>
+          <h3 className="section-title" style={{ margin: 0 }}><Settings size={14} style={{ marginRight: '6px' }} /> Paper Settings</h3>
+          {onClose && (
+            <button onClick={onClose} className="item-badge-btn close-btn-inspector" title="Close Panel">
+              <X size={13} />
+            </button>
+          )}
+        </div>
         
         {/* Paper Presets */}
         <div className="prop-control">
