@@ -94,7 +94,7 @@ export const PageCanvas: React.FC<PageCanvasProps> = ({
     };
   };
 
-  const startDrag = (e: React.MouseEvent, mode: typeof dragMode) => {
+  const startDrag = (e: React.PointerEvent, mode: typeof dragMode) => {
     e.stopPropagation();
     if (!selectedElement) return;
     captureHistoryState();
@@ -109,9 +109,9 @@ export const PageCanvas: React.FC<PageCanvasProps> = ({
     });
   };
 
-  // MOUSE DOWN HANDLER
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (e.button !== 0) return; // Left click only
+  // POINTER DOWN HANDLER
+  const handlePointerDown = (e: React.PointerEvent) => {
+    if (e.button !== 0 && e.pointerType === 'mouse') return; // Left click only for mouse
     
     // Blur any active textareas if clicking on canvas
     if (editingTextId && e.target === containerRef.current) {
@@ -144,11 +144,8 @@ export const PageCanvas: React.FC<PageCanvasProps> = ({
       const clickedElement = [...page.elements]
         .sort((a, b) => b.layerOrder - a.layerOrder) // Check top elements first
         .find(el => {
-          // A rough bounding box check
           const cx = coords.x;
           const cy = coords.y;
-          // Account for rotation by checking non-rotated box for simple hit test
-          // For high fidelity, we can just do a bounding box check
           return cx >= el.x && cx <= el.x + el.width && cy >= el.y && cy <= el.y + el.height;
         });
 
@@ -174,8 +171,8 @@ export const PageCanvas: React.FC<PageCanvasProps> = ({
     }
   };
 
-  // MOUSE MOVE HANDLER
-  const handleMouseMove = (e: React.MouseEvent) => {
+  // POINTER MOVE HANDLER
+  const handlePointerMove = (e: React.PointerEvent) => {
     const coords = getCanvasCoords(e.clientX, e.clientY);
 
     // DRAWING
@@ -254,14 +251,12 @@ export const PageCanvas: React.FC<PageCanvasProps> = ({
         }
 
         if (dragMode === 'rotate') {
-          // Calculate angle from element center to mouse pointer
           const centerX = el.x + el.width / 2;
           const centerY = el.y + el.height / 2;
           const angle = Math.atan2(coords.y - centerY, coords.x - centerX) * (180 / Math.PI);
-          // Adjust for starting angle
           return {
             ...el,
-            rotation: Math.round(angle - 90) // Offset rotation handle being at the top
+            rotation: Math.round(angle - 90)
           };
         }
 
@@ -272,8 +267,8 @@ export const PageCanvas: React.FC<PageCanvasProps> = ({
     }
   };
 
-  // MOUSE UP HANDLER
-  const handleMouseUp = (_e: React.MouseEvent) => {
+  // POINTER UP HANDLER
+  const handlePointerUp = (_e: React.PointerEvent) => {
 
     // SAVE DRAWING
     if (isDrawing && (activeTool === 'pen' || activeTool === 'highlighter')) {
@@ -997,22 +992,22 @@ export const PageCanvas: React.FC<PageCanvasProps> = ({
             {/* Top Left */}
             <div
               style={{ ...handleStyle('nwse-resize'), top: '-5px', left: '-5px' }}
-              onMouseDown={(e) => startDrag(e, 'resize-tl')}
+              onPointerDown={(e) => startDrag(e, 'resize-tl')}
             />
             {/* Top Right */}
             <div
               style={{ ...handleStyle('nesw-resize'), top: '-5px', right: '-5px' }}
-              onMouseDown={(e) => startDrag(e, 'resize-tr')}
+              onPointerDown={(e) => startDrag(e, 'resize-tr')}
             />
             {/* Bottom Left */}
             <div
               style={{ ...handleStyle('nesw-resize'), bottom: '-5px', left: '-5px' }}
-              onMouseDown={(e) => startDrag(e, 'resize-bl')}
+              onPointerDown={(e) => startDrag(e, 'resize-bl')}
             />
             {/* Bottom Right */}
             <div
               style={{ ...handleStyle('nwse-resize'), bottom: '-5px', right: '-5px' }}
-              onMouseDown={(e) => startDrag(e, 'resize-br')}
+              onPointerDown={(e) => startDrag(e, 'resize-br')}
             />
 
             {/* Rotation Stem & Handle */}
@@ -1041,7 +1036,7 @@ export const PageCanvas: React.FC<PageCanvasProps> = ({
                 pointerEvents: 'auto',
                 cursor: 'grab'
               }}
-              onMouseDown={(e) => startDrag(e, 'rotate')}
+              onPointerDown={(e) => startDrag(e, 'rotate')}
             />
           </>
         )}
@@ -1051,7 +1046,7 @@ export const PageCanvas: React.FC<PageCanvasProps> = ({
           <div
             className="canvas-floating-toolbar"
             style={{ pointerEvents: 'auto' }}
-            onMouseDown={(e) => e.stopPropagation()}
+            onPointerDown={(e) => e.stopPropagation()}
           >
             <button
               onClick={() => {
@@ -1170,15 +1165,16 @@ export const PageCanvas: React.FC<PageCanvasProps> = ({
   return (
     <div
       ref={containerRef}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
       onDoubleClick={handleDoubleClick}
       style={{
         position: 'relative',
         width: '100%',
         height: '100%',
-        backgroundColor: 'transparent'
+        backgroundColor: 'transparent',
+        touchAction: activeTool !== 'select' || selectedElementId ? 'none' : 'auto'
       }}
     >
       {/* Active Pen/Highlighter Drawing Layer */}
